@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/blog/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/blog/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="线程,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="synchronized与Lock的区别与使用详解引言在学习别人分享的面试经验时，看到Lock的使用。想起自己在上次面试也遇到了synchronized与Lock的区别与使用。于是整理了二者之间的区别和使用情况，同时对synchronized的使用过程一些常见问题的总结，最后参照源码和文档说明，对Lock的使用写了几个简单的demo。">
+<meta name="keywords" content="线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="synchronized与Lock">
+<meta property="og:url" content="https://492383222.github.io/blog/2018/11/05/synchronized与Lock/index.html">
+<meta property="og:site_name" content="三马子上高速">
+<meta property="og:description" content="synchronized与Lock的区别与使用详解引言在学习别人分享的面试经验时，看到Lock的使用。想起自己在上次面试也遇到了synchronized与Lock的区别与使用。于是整理了二者之间的区别和使用情况，同时对synchronized的使用过程一些常见问题的总结，最后参照源码和文档说明，对Lock的使用写了几个简单的demo。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://492383222.github.io/blog/images/线程/1.jpg">
+<meta property="og:image" content="https://492383222.github.io/blog/images/线程/2.jpg">
+<meta property="og:image" content="https://492383222.github.io/blog/images/线程/3.jpg">
+<meta property="og:updated_time" content="2018-11-05T05:55:45.090Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="synchronized与Lock">
+<meta name="twitter:description" content="synchronized与Lock的区别与使用详解引言在学习别人分享的面试经验时，看到Lock的使用。想起自己在上次面试也遇到了synchronized与Lock的区别与使用。于是整理了二者之间的区别和使用情况，同时对synchronized的使用过程一些常见问题的总结，最后参照源码和文档说明，对Lock的使用写了几个简单的demo。">
+<meta name="twitter:image" content="https://492383222.github.io/blog/images/线程/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://492383222.github.io/blog/2018/11/05/synchronized与Lock/">
+
+
+
+
+
+  <title>synchronized与Lock | 三马子上高速</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">三马子上高速</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/blog/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/blog/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/blog/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://492383222.github.io/blog/blog/2018/11/05/synchronized与Lock/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="翟宇宇">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/images/1.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三马子上高速">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">synchronized与Lock</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-05T11:28:31+08:00">
+                2018-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/线程/" itemprop="url" rel="index">
+                    <span itemprop="name">线程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="synchronized与Lock的区别与使用详解"><a href="#synchronized与Lock的区别与使用详解" class="headerlink" title="synchronized与Lock的区别与使用详解"></a>synchronized与Lock的区别与使用详解</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在学习别人分享的面试经验时，看到Lock的使用。想起自己在上次面试也遇到了synchronized与Lock的区别与使用。于是整理了二者之间的区别和使用情况，同时对synchronized的使用过程一些常见问题的总结，最后参照源码和文档说明，对Lock的使用写了几个简单的demo。<br><a id="more"></a></p>
+<h2 id="技术点"><a href="#技术点" class="headerlink" title="技术点"></a>技术点</h2><h3 id="1：线程与进程"><a href="#1：线程与进程" class="headerlink" title="1：线程与进程"></a>1：线程与进程</h3><p>在开始之前先把此进程与线程进行区分一下，一个程序最少需要一个进程，而一个进程对少需要一个线程，关系是线程-&gt;进程-&gt;程序的大致组成结构。所以线程是执行程序流的对消单位，而进程是系统进行资源分配和调度的一个独立单位，一下我们所有讨论的都是建立在线程的基础上。</p>
+<h3 id="2：Thread的几个重要的方法"><a href="#2：Thread的几个重要的方法" class="headerlink" title="2：Thread的几个重要的方法"></a>2：Thread的几个重要的方法</h3><p>我们先了解一下Thread的几个重要的方法，start()方法，调用该方法开始执行该线程；stop()方法，调用该方法强制结束线程执行；join方法，调用该方法等待该线程结束；sleep()方法，调用该方法线程进去等待；run()方法,调用该方法直接执行线程的run()方法，但是线程的start()方法时也会调用run()方法,区别就是一个由线程调度运行run()方法，一个是直接调用了线程中的run()方法。<br>看到这里可能有人会问啦，那wait()和notify呢？要注意，其实wait（）与notify()方法是Object的方法，不是Thread的方法！！同时wait()与notify()会配合使用，表示线程的挂起和线程的恢复。<br>这里还有一个常见的问题，顺带提一下，wait()和sleep()的区别，简单的说wait()会释放对象锁而sleep（）不会释放对象锁，这些问题有很多资料。</p>
+<h3 id="3：线程状态"><a href="#3：线程状态" class="headerlink" title="3：线程状态"></a>3：线程状态</h3><p><img src="/blog/2018/11/05/synchronized与Lock/../../../../images/线程/1.jpg" alt="图片"><br>线程总共有5大状态，通过上面第二个知识的介绍，理解起来很简单了。<br> 新建状态：新建线程对象，并没有调用start（）之前<br> 就绪状态：调用start()方法之后线程就进去就绪状态，但是并不是说只要调用一提的是，线程在睡眠和挂起恢复的时候就会进入就绪状态。<br> 运行状态：线程被设置为当前线程，开始执行run()方法，就进去线程的运行状态。<br> 阻塞状态：线程被暂定，比如调用sleep（）方法后线程进去阻塞状态。<br> 死亡状态：线程执行结束。</p>
+<h3 id="4：锁类型"><a href="#4：锁类型" class="headerlink" title="4：锁类型"></a>4：锁类型</h3><p>可重入锁：在执行对象中所有同步方法不用再次获得锁<br>可中断锁：在等待获取锁过程中可中断<br>公平锁： 按等待获取锁的线程的等待时间进行获取，等待时间长的具有优先获取锁权利<br>读写锁：对资源读取和写入的时候拆分为2部分处理，读的时候可以多线程一起读，写的时候必须同步地写</p>
+<h2 id="synchronized与Lock的区别"><a href="#synchronized与Lock的区别" class="headerlink" title="synchronized与Lock的区别"></a>synchronized与Lock的区别</h2><h3 id="1：二者之间的区别对比"><a href="#1：二者之间的区别对比" class="headerlink" title="1：二者之间的区别对比"></a>1：二者之间的区别对比</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>synchronized</th>
+<th>Lock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存在层次</td>
+<td>Java的关键字，在jvm层面上</td>
+<td>是一个类</td>
+</tr>
+<tr>
+<td>锁的释放</td>
+<td>1：以获取锁的线程执行完同步代码，释放锁。2：线程执行发生异常，jvn会让线程释放锁</td>
+<td>在finally中必须释放锁，不然容易造成线程死锁</td>
+</tr>
+<tr>
+<td>锁的获取</td>
+<td>假设A线程获得锁，B线程等待。如果A线程阻塞，B线程会一直等待</td>
+<td>分情况而定，Lock有多个获取锁的方式，具体下面会说到，大致就是可以尝试获取锁，线程可以不用一直等待</td>
+</tr>
+<tr>
+<td>锁状态</td>
+<td>无法判断</td>
+<td>可以判断</td>
+</tr>
+<tr>
+<td>锁类型</td>
+<td>可重入 不可中断 非公平</td>
+<td>可重入 可判断 可公平（二者皆可）</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>少量同步</td>
+<td>大量同步</td>
+</tr>
+</tbody>
+</table>
+<p>或许，看到这里还对LOCK所知甚少，那么接下来，我们进入LOCK的深入学习。</p>
+<h3 id="2：Lock详细介绍与Demo"><a href="#2：Lock详细介绍与Demo" class="headerlink" title="2：Lock详细介绍与Demo"></a>2：Lock详细介绍与Demo</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Acquires the lock.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Acquires the lock unless the current thread is</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@linkplain</span> Thread#interrupt interrupted&#125;.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Acquires the lock only if it is free at the time of invocation.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Acquires the lock if it is free within the given waiting time and the</span></span><br><span class="line"><span class="comment">    * current thread has not been &#123;<span class="doctag">@linkplain</span> Thread#interrupt interrupted&#125;.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Releases the lock.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从lock接口中我们可以看到几个主要的方法。<br>lock()：获取锁，如果锁被暂用则一直等待<br>unlock():释放锁<br>tryLock(): 注意返回类型是boolean，如果获取锁的时候锁被占用就返回false，否则返回true<br>tryLock(long time, TimeUnit unit)：比起tryLock()就是给了一个时间期限，保证等待参数时间<br>lockInterruptibly()：用该锁的获得方式，如果线程在获取锁的阶段进入了等待，那么可以中断此线程，先去做别的事<br>通过 以上的解释，大致可以解释在上个部分中“锁类型(lockInterruptibly())”，“锁状态(tryLock())”等问题，还有就是前面子所获取的过程我所写的“大致就是可以尝试获得锁，线程可以不会一直等待”用了“可以”的原因。</p>
+<p>下面是Lock一般使用的例子，注意ReentrantLock是Lock接口的实现。<br>lock（）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LockTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span> <span class="params">(Thread thread)</span></span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"线程名称"</span>+thread.getName()+<span class="string">"获得锁"</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"线程名称"</span>+thread.getName()+<span class="string">"释放锁"</span>);</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        LockTest lockTest = <span class="keyword">new</span> LockTest();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            lockTest.method(Thread.currentThread());</span><br><span class="line">        &#125;,<span class="string">"t1"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            lockTest.method(Thread.currentThread());</span><br><span class="line">        &#125;,<span class="string">"t2"</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>tryLock():<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LockTestOne</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(Thread thread)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(lock.tryLock())&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">"线程名"</span>+thread.getName() + <span class="string">"获得了锁"</span>);</span><br><span class="line">            &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">"线程名"</span>+thread.getName() + <span class="string">"释放了锁"</span>);</span><br><span class="line">                lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"我是"</span>+Thread.currentThread().getName()+<span class="string">"有人占着锁，我就不要啦"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        LockTestOne lockTestOne = <span class="keyword">new</span> LockTestOne();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            lockTestOne.method(Thread.currentThread());</span><br><span class="line">        &#125;,<span class="string">"t1"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            lockTestOne.method(Thread.currentThread());</span><br><span class="line">        &#125;,<span class="string">"t2"</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>看到这里相信大家也都会使用如何使用Lock了吧，关于tryLock(long time, TimeUnit unit)和lockInterruptibly()不再赘述。前者主要存在一个等待时间，在测试代码中写入一个等待时间，后者主要是等待中断，会抛出一个中断异常，常用度不高，喜欢探究可以自己深入研究。</p>
+<p>前面比较重提到“公平锁”，在这里可以提一下ReentrantLock对于平衡锁的定义，在源码中有这么两段：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Sync object for non-fair locks</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NonfairSync</span> <span class="keyword">extends</span> <span class="title">Sync</span> </span>&#123;</span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">7316153563782823691L</span>;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Performs lock.  Try immediate barge, backing up to normal</span></span><br><span class="line"><span class="comment">        * acquire on failure.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (compareAndSetState(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">               setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">           <span class="keyword">else</span></span><br><span class="line">               acquire(<span class="number">1</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> nonfairTryAcquire(acquires);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Sync object for fair locks</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">FairSync</span> <span class="keyword">extends</span> <span class="title">Sync</span> </span>&#123;</span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = -<span class="number">3000897897090466540L</span>;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           acquire(<span class="number">1</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Fair version of tryAcquire.  Don't grant access unless</span></span><br><span class="line"><span class="comment">        * recursive call or no waiters or is first.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">final</span> Thread current = Thread.currentThread();</span><br><span class="line">           <span class="keyword">int</span> c = getState();</span><br><span class="line">           <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">               <span class="keyword">if</span> (!hasQueuedPredecessors() &amp;&amp;</span><br><span class="line">                   compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">                   setExclusiveOwnerThread(current);</span><br><span class="line">                   <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">               <span class="keyword">int</span> nextc = c + acquires;</span><br><span class="line">               <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>)</span><br><span class="line">                   <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum lock count exceeded"</span>);</span><br><span class="line">               setState(nextc);</span><br><span class="line">               <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>从以上源码可以看出在Lock中可以自己控制锁是否公平，而且，默认的是非公平锁，以下是ReentrantLock的构造函数:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       sync = <span class="keyword">new</span> NonfairSync();<span class="comment">//默认非公平锁</span></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="1：二种锁的底层实现方式："><a href="#1：二种锁的底层实现方式：" class="headerlink" title="1：二种锁的底层实现方式："></a>1：二种锁的底层实现方式：</h3><p>synchronized:我们知道java使用字节码指令来控制程序的，在字节指令中，存在有synchronized所包含的代码块，那么会形成2段流程序来执行。<br><img src="/blog/2018/11/05/synchronized与Lock/../../../../images/线程/2.jpg" alt="图片"><br>我们点击查看SyncDemo.java的源码SyncDemo.class，可以看到如下：<br><img src="/blog/2018/11/05/synchronized与Lock/../../../../images/线程/3.jpg" alt="图片"><br>如上就是这段代码段字节码指令，没你想的那么难吧。言归正传，我们可以清晰段看到，其实synchronized映射成字节码指令就是增加来两个指令：monitorenter和monitorexit。当一条线程进行执行的遇到monitorenter指令的时候，它会去尝试获得锁，如果获得锁那么锁计数+1（为什么会加一呢，因为它是一个可重入锁，所以需要用这个锁计数判断锁的情况），如果没有获得锁，那么阻塞。当它遇到monitorexit的时候，锁计数器-1，当计数器为0，那么就释放锁。</p>
+<p>那么有的朋友看到这里就疑惑了，那图上有2个monitorexit呀？马上回答这个问题：上面我以前写的文章也有表述过，synchronized锁释放有两种机制，一种就是执行完释放；另外一种就是发送异常，虚拟机释放。图中第二个monitorexit就是发生异常时执行的流程，这就是我开头说的“会有2个流程存在“。而且，从图中我们也可以看到在第13行，有一个goto指令，也就是说如果正常运行结束会跳转到19行执行。</p>
+<p>这下，你对synchronized是不是了解的很清晰了呢。接下来我们再聊一聊Lock。</p>
+<p>Lock：Lock实现和synchronized不一样，后者是一种悲观锁，它胆子很小，它很怕有人和它抢吃的，所以它每次吃东西前都把自己关起来。而Lock呢底层其实是CAS乐观锁的体现，它无所谓，别人抢了它吃的，它重新去拿吃的就好啦，所以它很乐观。具体底层怎么实现，博主不在细述，有机会的话，我会对concurrent包下面的机制好好和大家说说，如果面试问起，你就说底层主要靠volatile和CAS操作实现的。<br>现在，我要说的是：尽可能去使用synchronized而不要去使用LOCK</p>
+<p>什么概念呢？我和大家打个比方：你叫jdk，你生了一个孩子叫synchronized，后来呢，你领养了一个孩子叫LOCK。起初，LOCK刚来到新家的时候，它很乖，很懂事，各个方面都表现的比synchronized好。你很开心，但是你内心深处又有一点淡淡的忧伤，你不希望你自己亲生的孩子竟然还不如一个领养的孩子乖巧。这个时候，你对亲生的孩子教育更加深刻了，你想证明，你的亲生孩子synchronized并不会比领养的孩子LOCK差。（只是打个比方）<br>那如何教育呢？ </p>
+<p>在jdk1.6~jdk1.7的时候，也就是synchronized16、7岁的时候，你作为爸爸，你给他优化了，具体优化在哪里呢：<br>1、线程自旋和适应性自旋<br>我们知道，java’线程其实是映射在内核之上的，线程的挂起和恢复会极大的影响开销。并且jdk官方人员发现，很多线程在等待锁的时候，在很短的一段时间就获得了锁，所以它们在线程等待的时候，并不需要把线程挂起，而是让他无目的的循环，一般设置10次。这样就避免了线程切换的开销，极大的提升了性能。<br>而适应性自旋，是赋予了自旋一种学习能力，它并不固定自旋10次一下。他可以根据它前面线程的自旋情况，从而调整它的自旋，甚至是不经过自旋而直接挂起。<br>2、锁消除<br>什么叫锁消除呢？就是把不必要的同步在编译阶段进行移除。<br>那么有的小伙伴又迷糊了，我自己写的代码我会不知道这里要不要加锁？我加了锁就是表示这边会有同步呀？<br>并不是这样，这里所说的锁消除并不一定指代是你写的代码的锁消除，我打一个比方：<br>在jdk1.5以前，我们的String字符串拼接操作其实底层是StringBuffer来实现的（这个大家可以用我前面介绍的方法，写一个简单的demo，然后查看class文件中的字节码指令就清楚了），而在jdk1.5之后，那么是用StringBuilder来拼接的。我们考虑前面的情况，比如如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String str1=<span class="string">"qwe"</span>;</span><br><span class="line">String str2=<span class="string">"asd"</span>;</span><br><span class="line">String str3=str1+str2;</span><br></pre></td></tr></table></figure></p>
+<p>底层实现会变成这样：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">sb.append(<span class="string">"qwe"</span>);</span><br><span class="line">sb.append(<span class="string">"asd"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>我们知道，StringBuffer是一个线程安全的类，也就是说两个append方法都会同步，通过指针逃逸分析（就是变量不会外泄），我们发现在这段代码并不存在线程安全问题，这个时候就会把这个同步锁消除。</p>
+<p>3、锁粗化 </p>
+<p>在用synchronized的时候，我们都讲究为了避免大开销，尽量同步代码块要小。那么为什么还要加粗呢？<br>我们继续以上面的字符串拼接为例，我们知道在这一段代码中，每一个append都需要同步一次，那么我可以把锁粗化到第一个append和最后一个append（这里不要去纠结前面的锁消除，我只是打个比方）</p>
+<p>4、轻量级锁</p>
+<p>5、偏向锁</p>
+<p>关于最后这两种，我希望留给有缘的读者自己去查找，我不希望我把一件事情描述的那么详细，自己动手得到才是你自己的，最后两种并不难。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/blog/tags/线程/" rel="tag"># 线程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2018/10/29/服务提供与调用/" rel="next" title="服务提供与调用">
+                <i class="fa fa-chevron-left"></i> 服务提供与调用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/blog/images/1.gif" alt="翟宇宇">
+            
+              <p class="site-author-name" itemprop="name">翟宇宇</p>
+              <p class="site-description motion-element" itemprop="description">爱生活爱编程</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/blog/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/blog/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/blog/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized与Lock的区别与使用详解"><span class="nav-number">1.</span> <span class="nav-text">synchronized与Lock的区别与使用详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#技术点"><span class="nav-number">1.2.</span> <span class="nav-text">技术点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1：线程与进程"><span class="nav-number">1.2.1.</span> <span class="nav-text">1：线程与进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2：Thread的几个重要的方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">2：Thread的几个重要的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3：线程状态"><span class="nav-number">1.2.3.</span> <span class="nav-text">3：线程状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4：锁类型"><span class="nav-number">1.2.4.</span> <span class="nav-text">4：锁类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized与Lock的区别"><span class="nav-number">1.3.</span> <span class="nav-text">synchronized与Lock的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1：二者之间的区别对比"><span class="nav-number">1.3.1.</span> <span class="nav-text">1：二者之间的区别对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2：Lock详细介绍与Demo"><span class="nav-number">1.3.2.</span> <span class="nav-text">2：Lock详细介绍与Demo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">1.4.</span> <span class="nav-text">补充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1：二种锁的底层实现方式："><span class="nav-number">1.4.1.</span> <span class="nav-text">1：二种锁的底层实现方式：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">翟宇宇</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
