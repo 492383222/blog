@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/blog/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/blog/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/blog/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/blog/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="SSM,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Spring面试题1、Spring在ssm中起作用？">
+<meta name="keywords" content="SSM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSM框架相关基础面试题整理">
+<meta property="og:url" content="https://492383222.github.io/blog/2018/11/16/SSM框架相关基础面试题整理/index.html">
+<meta property="og:site_name" content="三马子上高速">
+<meta property="og:description" content="Spring面试题1、Spring在ssm中起作用？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://492383222.github.io/blog/images/springmvc.jpg">
+<meta property="og:image" content="https://492383222.github.io/blog/images/mybatis.jpg">
+<meta property="og:updated_time" content="2018-11-16T03:21:54.499Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSM框架相关基础面试题整理">
+<meta name="twitter:description" content="Spring面试题1、Spring在ssm中起作用？">
+<meta name="twitter:image" content="https://492383222.github.io/blog/images/springmvc.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/blog/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://492383222.github.io/blog/2018/11/16/SSM框架相关基础面试题整理/">
+
+
+
+
+
+  <title>SSM框架相关基础面试题整理 | 三马子上高速</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">三马子上高速</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/blog/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/blog/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/blog/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/blog/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/blog/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://492383222.github.io/blog/blog/2018/11/16/SSM框架相关基础面试题整理/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="翟宇宇">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/blog/images/1.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="三马子上高速">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SSM框架相关基础面试题整理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-16T09:57:01+08:00">
+                2018-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/SSM/" itemprop="url" rel="index">
+                    <span itemprop="name">SSM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Spring面试题"><a href="#Spring面试题" class="headerlink" title="Spring面试题"></a>Spring面试题</h1><h2 id="1、Spring在ssm中起作用？"><a href="#1、Spring在ssm中起作用？" class="headerlink" title="1、Spring在ssm中起作用？"></a>1、Spring在ssm中起作用？</h2><a id="more"></a>
+<p>spring:轻量级框架</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;作用：Bean工厂，用来管理Bean的生命周期和框架集成。</p>
+<p>二大核心：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IOC/DI(控制反转/依赖注入)：把dao依赖注入到service层，service层翻转给action层，spring顶层容器为BeanFactory。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AOP：面向切面编程。</p>
+<h2 id="2、spring的事务"><a href="#2、spring的事务" class="headerlink" title="2、spring的事务"></a>2、spring的事务</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;编程式事务管理：编程方式管理事务，极大灵活性。难维护。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;声明式事务管理：可以将业务代码和事务管理分离，用注解和xml配置来管理事务。</p>
+<h2 id="3、IOC在项目中的作用"><a href="#3、IOC在项目中的作用" class="headerlink" title="3、IOC在项目中的作用"></a>3、IOC在项目中的作用</h2><p>作用：ioc解决对象之间的依赖问题，把所有Bean的依赖关系通过配置文件或注解关联起来，降低耦合。</p>
+<h2 id="4、Spring的配置文件中的内容"><a href="#4、Spring的配置文件中的内容" class="headerlink" title="4、Spring的配置文件中的内容"></a>4、Spring的配置文件中的内容</h2><p>开启事务注解驱动。</p>
+<p>事务管理器。</p>
+<p>开启注解功能，并配置扫描包。</p>
+<p>配置数据库。</p>
+<p>配置SQL会话工厂，别名，映射文件。</p>
+<p>不用编写Dao层的实现。</p>
+<h2 id="5、Spring下的注解"><a href="#5、Spring下的注解" class="headerlink" title="5、Spring下的注解"></a>5、Spring下的注解</h2><p>注册：@controller@Service@Compant</p>
+<p>注入：@Autowired@Resource</p>
+<p>请求地址：@RequestMapping</p>
+<p>返回具体数据类型而非跳转：@ResponseBody</p>
+<h2 id="6、SpringDI的三中方式"><a href="#6、SpringDI的三中方式" class="headerlink" title="6、SpringDI的三中方式"></a>6、SpringDI的三中方式</h2><p>构造器注入：通过构造方法初始化</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">index</span>=<span class="string">"0"</span> <span class="attr">type</span>=<span class="string">"java.lang.String"</span> <span class="attr">value</span>=<span class="string">"宝马"</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>setter方法注入：通过setter方法初始化</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"id"</span> <span class="attr">value</span>=<span class="string">"1111"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接口注入</p>
+<h2 id="7、Spring主要使用了什么模式"><a href="#7、Spring主要使用了什么模式" class="headerlink" title="7、Spring主要使用了什么模式"></a>7、Spring主要使用了什么模式</h2><p>工厂模式：每个Bean的创建通过方法</p>
+<p>单例模式：默认的每个Bean的作用域都是单例模式</p>
+<p>代理模式：关于AOP的实现通过代理模式</p>
+<h2 id="8、IOC，AOP的实现原理"><a href="#8、IOC，AOP的实现原理" class="headerlink" title="8、IOC，AOP的实现原理"></a>8、IOC，AOP的实现原理</h2><p>IOC：通过反射机制生成注入对象</p>
+<p>AOP：动态代理</p>
+<h1 id="SppringMvc面试题"><a href="#SppringMvc面试题" class="headerlink" title="SppringMvc面试题"></a>SppringMvc面试题</h1><h2 id="1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？"><a href="#1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？" class="headerlink" title="1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？"></a>1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？</h2><p>问题：单例模式，在多线程访问时有线程安全问题</p>
+<p>解决方案：不要用同步，在控制器里面不能写字段</p>
+<h2 id="2、SpringMvc中控制器的注解？"><a href="#2、SpringMvc中控制器的注解？" class="headerlink" title="2、SpringMvc中控制器的注解？"></a>2、SpringMvc中控制器的注解？</h2><p>@Controller改注解表明该类扮演控制器的角色</p>
+<h2 id="3、-RequestMapping注解用在类上的作用？"><a href="#3、-RequestMapping注解用在类上的作用？" class="headerlink" title="3、@RequestMapping注解用在类上的作用？"></a>3、@RequestMapping注解用在类上的作用？</h2><p>作用：用来映射一个URl到一个类或者一个特定的处理方法上</p>
+<h2 id="4、前台有多个参数，这些参数都是一个对象，快速得到对象？"><a href="#4、前台有多个参数，这些参数都是一个对象，快速得到对象？" class="headerlink" title="4、前台有多个参数，这些参数都是一个对象，快速得到对象？"></a>4、前台有多个参数，这些参数都是一个对象，快速得到对象？</h2><p>方法：直接在方法中声明这个对象，SpringMvc就自动把属性赋值到对象里面</p>
+<h2 id="5、SpingMvc中函数的返回值？"><a href="#5、SpingMvc中函数的返回值？" class="headerlink" title="5、SpingMvc中函数的返回值？"></a>5、SpingMvc中函数的返回值？</h2><p>String,ModelAndView,List,Set等</p>
+<p>一般String,ajax请求返回一个List集合</p>
+<h2 id="6、SpringMvc中的转发和重定向"><a href="#6、SpringMvc中的转发和重定向" class="headerlink" title="6、SpringMvc中的转发和重定向"></a>6、SpringMvc中的转发和重定向</h2><p>转发：return “hello”</p>
+<p>重定向：return “redirect:hello.jsp”</p>
+<h2 id="7、SpringMvc和ajax之间的互相调用？"><a href="#7、SpringMvc和ajax之间的互相调用？" class="headerlink" title="7、SpringMvc和ajax之间的互相调用？"></a>7、SpringMvc和ajax之间的互相调用？</h2><p>通过jackSon框架把java里面的对象直接转换成js可识别的json对象具体步骤如下：</p>
+<p>1：加入JackSon.jar</p>
+<p>2：在配置文件中配置json的映射</p>
+<p>3：在接受Ajax方法里面直接返回Object，list等，方法前面需要加上注解@ResponseBody</p>
+<h2 id="8、SpringMvcd的工作流程图？"><a href="#8、SpringMvcd的工作流程图？" class="headerlink" title="8、SpringMvcd的工作流程图？"></a>8、SpringMvcd的工作流程图？<img src="/blog/2018/11/16/SSM框架相关基础面试题整理/../../../../images/springmvc.jpg" alt="图片"></h2><h2 id="9、Struts2和SpringMvc的区别？"><a href="#9、Struts2和SpringMvc的区别？" class="headerlink" title="9、Struts2和SpringMvc的区别？"></a>9、Struts2和SpringMvc的区别？</h2><p>1：入口不同</p>
+<p>Struts2：filter过滤器</p>
+<p>SpringMvc：一个Servlet即前段控制器</p>
+<p>2：开发方式不同</p>
+<p>Struts2:基于类的开发，传递参数通过类的属性，只能设置为多例</p>
+<p>SpringMvc：基于方法开发（一个url对应一个方法），请求参数传递到方法形参，可以为单例也可以为多例（建议为单例）</p>
+<p>3：请求方式不同</p>
+<p>Struts2：值栈村塾请求和响应的数据，通过OGNL存取数据 </p>
+<p>SpringMvc：通过参数解析器将request请求内容解析，给方法形参赋值，将数据和视图封装成ModelAndView对象，最后又将ModelAndView中的模型数据通过request域传输到页面，jsp视图解析器默认使用的是jstl。</p>
+<h1 id="MyBatis面试题"><a href="#MyBatis面试题" class="headerlink" title="MyBatis面试题"></a>MyBatis面试题</h1><h2 id="1、ibatis和mybatis"><a href="#1、ibatis和mybatis" class="headerlink" title="1、ibatis和mybatis"></a>1、ibatis和mybatis</h2><p>Ibatis：2010年，apache的Ibatis框架停止更新，并移交给了google团队，同时更名为MyBatis。从2010年后Ibatis在没更新过，彻底变成了一个孤儿框架。一个没人维护的框架注定被mybatis拍在沙滩上。</p>
+<p>Mybatis：Ibatis的升级版本。</p>
+<h2 id="2、什么事Mybatis的接口绑定，有什么好处？"><a href="#2、什么事Mybatis的接口绑定，有什么好处？" class="headerlink" title="2、什么事Mybatis的接口绑定，有什么好处？"></a>2、什么事Mybatis的接口绑定，有什么好处？</h2><p>mybatis实现DAO接口xml映射文件的绑定，自动为我们生成接口的具体实现，使用起来变得跟加省事和方便。</p>
+<h2 id="3、什么情况用注解，什么情况先使用xml绑定"><a href="#3、什么情况用注解，什么情况先使用xml绑定" class="headerlink" title="3、什么情况用注解，什么情况先使用xml绑定"></a>3、什么情况用注解，什么情况先使用xml绑定</h2><p>注解使用情况：sql语句简单时</p>
+<p>xml绑定使用情况：xml绑定（@RequestMap用来绑定xml文件）</p>
+<h2 id="4、Mybatis在核心处理类叫什么？"><a href="#4、Mybatis在核心处理类叫什么？" class="headerlink" title="4、Mybatis在核心处理类叫什么？"></a>4、Mybatis在核心处理类叫什么？</h2><p>SqlSession</p>
+<h2 id="5、查询表明和返回实体Bean对象不一致，如何处理"><a href="#5、查询表明和返回实体Bean对象不一致，如何处理" class="headerlink" title="5、查询表明和返回实体Bean对象不一致，如何处理"></a>5、查询表明和返回实体Bean对象不一致，如何处理</h2><p>映射键值即可</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">"title"</span> <span class="attr">property</span>=<span class="string">"title"</span> <span class="attr">javaType</span>=<span class="string">"java.lang.String"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>column：数据库中标的列名</p>
+<p>property：实体Bean中的属性名</p>
+<h2 id="6、mybatis的好处？"><a href="#6、mybatis的好处？" class="headerlink" title="6、mybatis的好处？"></a>6、mybatis的好处？</h2><p>把sql语句从java中独立出来</p>
+<p>封装了底层的JDBC,API的调用，并且能够将结果集自动转换成javaBean对象，简化了java数据库编程的重复工作。</p>
+<p>自己编写sql语句，跟加灵活</p>
+<p>入参无需用对象封装（或者map封装），使用@param注解</p>
+<h2 id="7、Mybatis配置一对多？"><a href="#7、Mybatis配置一对多？" class="headerlink" title="7、Mybatis配置一对多？"></a>7、Mybatis配置一对多？</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">"topicComment"</span> <span class="attr">column</span>=<span class="string">"id"</span> <span class="attr">ofType</span>=<span class="string">"com.tmf.bbs.pojo.Comment"</span> <span class="attr">select</span>=<span class="string">"selectComment"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>property：实体Bean属性名</p>
+<p>column：共同列</p>
+<p>ofType:集合中元素的类型</p>
+<p>select:要连接的查询</p>
+<h2 id="8、Mybatis配置一对一？"><a href="#8、Mybatis配置一对一？" class="headerlink" title="8、Mybatis配置一对一？"></a>8、Mybatis配置一对一？</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">"topicType"</span> <span class="attr">select</span>=<span class="string">"selectType"</span> <span class="attr">column</span>=<span class="string">"topics_type_id"</span> <span class="attr">javaType</span>=<span class="string">"com.tmf.bbs.pojo.Type"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>property：属性名</p>
+<p>select：要连接的查询</p>
+<p>column：共同列</p>
+<p>javaType：集合中元素类型</p>
+<h2 id="9、-和-的区别？"><a href="#9、-和-的区别？" class="headerlink" title="9、${}和#{}的区别？"></a>9、${}和#{}的区别？</h2><p>${}简单字符串替换，把${}直接替换成变量的值，不做任何转换，这种是取值以后再去编译sql语句。</p>
+<p>#{}预编译处理，sql中#{}替换成？，补全预编译语句，有效的防止SQl语句注入，这种取值是编译好SQL语句在取值</p>
+<h2 id="10、-获取上一次自动生成的主键值？"><a href="#10、-获取上一次自动生成的主键值？" class="headerlink" title="10、 获取上一次自动生成的主键值？"></a>10、 获取上一次自动生成的主键值？</h2><p>select last_insert_id()</p>
+<h2 id="11、Mybatis如何分页，分页原理"><a href="#11、Mybatis如何分页，分页原理" class="headerlink" title="11、Mybatis如何分页，分页原理"></a>11、Mybatis如何分页，分页原理</h2><p>RowBounds对象分页</p>
+<p>在sql内直接书写，带有物理分页</p>
+<h2 id="12、Mybatis工作原理？"><a href="#12、Mybatis工作原理？" class="headerlink" title="12、Mybatis工作原理？"></a>12、Mybatis工作原理？<img src="/blog/2018/11/16/SSM框架相关基础面试题整理/../../../../images/mybatis.jpg" alt="图片"></h2><p>原理：</p>
+<p>通过SqlSessionFactoryBuilder从mybatis-config.xml配置文件中构建SqlSessionFactory.</p>
+<p>通过SqlSessionFactory开启一个sqlSession,通过SqlSession实例获得Mapper对象并且运行Mapper映射的SQL语句。</p>
+<p>完成数据库的CRUD操作和事务提交，关闭sqlSession.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/blog/tags/SSM/" rel="tag"># SSM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2018/11/05/synchronized与Lock/" rel="next" title="synchronized与Lock">
+                <i class="fa fa-chevron-left"></i> synchronized与Lock
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/blog/images/1.gif" alt="翟宇宇">
+            
+              <p class="site-author-name" itemprop="name">翟宇宇</p>
+              <p class="site-description motion-element" itemprop="description">爱生活爱编程</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/blog/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/blog/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/blog/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring面试题"><span class="nav-number">1.</span> <span class="nav-text">Spring面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、Spring在ssm中起作用？"><span class="nav-number">1.1.</span> <span class="nav-text">1、Spring在ssm中起作用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、spring的事务"><span class="nav-number">1.2.</span> <span class="nav-text">2、spring的事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、IOC在项目中的作用"><span class="nav-number">1.3.</span> <span class="nav-text">3、IOC在项目中的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、Spring的配置文件中的内容"><span class="nav-number">1.4.</span> <span class="nav-text">4、Spring的配置文件中的内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、Spring下的注解"><span class="nav-number">1.5.</span> <span class="nav-text">5、Spring下的注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6、SpringDI的三中方式"><span class="nav-number">1.6.</span> <span class="nav-text">6、SpringDI的三中方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7、Spring主要使用了什么模式"><span class="nav-number">1.7.</span> <span class="nav-text">7、Spring主要使用了什么模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8、IOC，AOP的实现原理"><span class="nav-number">1.8.</span> <span class="nav-text">8、IOC，AOP的实现原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SppringMvc面试题"><span class="nav-number">2.</span> <span class="nav-text">SppringMvc面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？"><span class="nav-number">2.1.</span> <span class="nav-text">1、SpringMvc的控制器是不是单例模式，如果是有什么问题，怎么解决？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、SpringMvc中控制器的注解？"><span class="nav-number">2.2.</span> <span class="nav-text">2、SpringMvc中控制器的注解？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、-RequestMapping注解用在类上的作用？"><span class="nav-number">2.3.</span> <span class="nav-text">3、@RequestMapping注解用在类上的作用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、前台有多个参数，这些参数都是一个对象，快速得到对象？"><span class="nav-number">2.4.</span> <span class="nav-text">4、前台有多个参数，这些参数都是一个对象，快速得到对象？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、SpingMvc中函数的返回值？"><span class="nav-number">2.5.</span> <span class="nav-text">5、SpingMvc中函数的返回值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6、SpringMvc中的转发和重定向"><span class="nav-number">2.6.</span> <span class="nav-text">6、SpringMvc中的转发和重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7、SpringMvc和ajax之间的互相调用？"><span class="nav-number">2.7.</span> <span class="nav-text">7、SpringMvc和ajax之间的互相调用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8、SpringMvcd的工作流程图？"><span class="nav-number">2.8.</span> <span class="nav-text">8、SpringMvcd的工作流程图？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9、Struts2和SpringMvc的区别？"><span class="nav-number">2.9.</span> <span class="nav-text">9、Struts2和SpringMvc的区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MyBatis面试题"><span class="nav-number">3.</span> <span class="nav-text">MyBatis面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、ibatis和mybatis"><span class="nav-number">3.1.</span> <span class="nav-text">1、ibatis和mybatis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、什么事Mybatis的接口绑定，有什么好处？"><span class="nav-number">3.2.</span> <span class="nav-text">2、什么事Mybatis的接口绑定，有什么好处？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、什么情况用注解，什么情况先使用xml绑定"><span class="nav-number">3.3.</span> <span class="nav-text">3、什么情况用注解，什么情况先使用xml绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、Mybatis在核心处理类叫什么？"><span class="nav-number">3.4.</span> <span class="nav-text">4、Mybatis在核心处理类叫什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、查询表明和返回实体Bean对象不一致，如何处理"><span class="nav-number">3.5.</span> <span class="nav-text">5、查询表明和返回实体Bean对象不一致，如何处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6、mybatis的好处？"><span class="nav-number">3.6.</span> <span class="nav-text">6、mybatis的好处？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7、Mybatis配置一对多？"><span class="nav-number">3.7.</span> <span class="nav-text">7、Mybatis配置一对多？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8、Mybatis配置一对一？"><span class="nav-number">3.8.</span> <span class="nav-text">8、Mybatis配置一对一？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9、-和-的区别？"><span class="nav-number">3.9.</span> <span class="nav-text">9、${}和#{}的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10、-获取上一次自动生成的主键值？"><span class="nav-number">3.10.</span> <span class="nav-text">10、 获取上一次自动生成的主键值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11、Mybatis如何分页，分页原理"><span class="nav-number">3.11.</span> <span class="nav-text">11、Mybatis如何分页，分页原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12、Mybatis工作原理？"><span class="nav-number">3.12.</span> <span class="nav-text">12、Mybatis工作原理？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">翟宇宇</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/blog/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/blog/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/blog/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
